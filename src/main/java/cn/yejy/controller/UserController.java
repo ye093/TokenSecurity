@@ -57,10 +57,18 @@ public class UserController {
             if (newUser == null) {
                 result = ResponseData.error(400, "保存失败");
             } else {
-                result = ResponseData.ok("ok", user);
+                result = ResponseData.ok("ok", newUser);
             }
         }
         return result;
+    }
+
+    @PostMapping(value = "/user/save2")
+    public ResponseEntity save2(@RequestBody User user) {
+        System.out.println(user);
+//        System.out.println(username);
+//        System.out.println(password);
+        return ResponseData.ok("ok");
     }
 
 }

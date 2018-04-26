@@ -1,6 +1,5 @@
 package cn.yejy.entity;
 
-import java.util.Date;
 
 public class User {
     private Long userId;
@@ -10,14 +9,14 @@ public class User {
     private Integer isExpired;
     private Integer isLocked;
     private Integer isEnabled;
-    private Date createdTime;
-    private Date updatedTime;
+    private String createdTime;
+    private String updatedTime;
 
     public User() {
 
     }
 
-    public User(String mobile, String username, String password, Integer isExpired, Integer isLocked, Integer isEnabled, Date createdTime, Date updatedTime) {
+    public User(String mobile, String username, String password, Integer isExpired, Integer isLocked, Integer isEnabled, String createdTime, String updatedTime) {
         this.mobile = mobile;
         this.username = username;
         this.password = password;
@@ -84,19 +83,19 @@ public class User {
         this.isEnabled = isEnabled;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 
-    public Date getUpdatedTime() {
+    public String getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(Date updatedTime) {
+    public void setUpdatedTime(String updatedTime) {
         this.updatedTime = updatedTime;
     }
 
