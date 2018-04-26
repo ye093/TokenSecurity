@@ -38,9 +38,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Long save() {
-        User user = userRepository.save(new User("177098899713", "叶金耘", "yejinyun", 0, 0, 1, null, new Date()));
-        return user.getUserId();
+    public User save(User newUser) {
+        User user = userRepository.save(newUser);
+        return user;
     }
 
     public int update(Long userId) {
