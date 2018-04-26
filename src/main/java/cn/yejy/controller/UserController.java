@@ -14,8 +14,12 @@ public class UserController {
     UserService userService;
 
     @GetMapping(value = "/user/{user_id}")
-    public User findOne(@PathVariable("user_id") Long id) {
-        return userService.findById(id);
+    public ResponseEntity findOne(@PathVariable("user_id") Long id) {
+        User user = userService.findById(id);
+        if (user == null) {
+            return ResponseEntity.ok("empty");
+        }
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping(value = "/user/all")
