@@ -1,0 +1,24 @@
+server:
+  port: 9090
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://yejinyun.cn:3306/ye?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: yejy
+    password: kfJINdifc186@*
+  mustache:
+    charset: UTF-8
+  cache:
+    jcache:
+      config: ehcache.xml
+
+logging:
+  level:
+    root: warn
+
+http:
+  encoding:
+    enabled: true
+    charset: UTF-8
+    force-response: true
+    force: true
