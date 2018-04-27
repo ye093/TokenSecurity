@@ -15,7 +15,6 @@ spring:
 logging:
   level:
     root: warn
-
 http:
   encoding:
     enabled: true

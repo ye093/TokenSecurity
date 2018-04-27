@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,17 +40,17 @@ public class UserRepository {
         return users;
     }
 
-    @CachePut(key = "#userId") //更新缓存,CachePut会将返回结果集缓存到数据中
+//    @CachePut(key = "#userId") //更新缓存,CachePut会将返回结果集缓存到数据中
     public Record save(String username, String mobile, String password, boolean isEnable, boolean isExpired, boolean isLocked) {
-        Timestamp createdTime = new Timestamp(System.currentTimeMillis());
+        LocalDateTime createdTime = LocalDateTime.now();
         Record user = dsl.insertInto(USER, USER.USERNAME, USER.MOBILE, USER.PASSWORD, USER.IS_ENABLED, USER.IS_EXPIRED, USER.IS_LOCKED, USER.CREATED_TIME, USER.UPDATED_TIME)
-                .values(username, mobile, password, isEnable, isExpired, isLocked, null, createdTime).returning().fetchOne();
+                .values(username, mobile, password, isEnable, isExpired, isLocked, createdTime, null).returning().fetchOne();
         return user;
     }
 
     @CacheEvict(key = "#userId") // 更新缓存,CachePut会将返回结果集缓存到数据中
     public Integer update(Integer userId, String username, String password) {
-        int rows = dsl.update(USER).set(USER.USERNAME, username).set(USER.PASSWORD, password).where(USER.USER_ID.eq(userId)).execute();
+        int rows = dsl.update(USER).set(USER.USERNAME, username).set(USER.PASSWORD, password).set(USER.UPDATED_TIME, LocalDateTime.now()).where(USER.USER_ID.eq(userId)).execute();
         return rows;
     }
 
