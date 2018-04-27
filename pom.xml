@@ -12,6 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <mysql.version>5.1.46</mysql.version>
     </properties>
 
     <parent>
@@ -30,11 +31,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
@@ -45,6 +47,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Provided -->
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -52,6 +61,23 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>gensrc/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -65,6 +91,90 @@
                     <artifactId>ehcache</artifactId>
                 </dependency>
             </dependencies>
+        </profile>
+
+        <profile>
+            <id>generate</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-jooq-utils</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen-maven</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>mysql</groupId>
+                                <artifactId>mysql-connector-java</artifactId>
+                                <version>${mysql.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <logging>DEBUG</logging>
+                            <jdbc>
+                                <driver>com.mysql.jdbc.Driver</driver>
+                                <url>jdbc:mysql://yejinyun.cn:3306/ye?useSSL=false</url>
+                                <username>yejy</username>
+                                <password>kfJINdifc186@*</password>
+                            </jdbc>
+                            <generator>
+                                <name>org.jooq.util.JavaGenerator</name>
+                                <database>
+                                    <name>org.jooq.util.mysql.MySQLDatabase</name>
+                                    <!--包含所有-->
+                                    <includes>.*</includes>
+                                    <excludes/>
+                                    <!--数据库名-->
+                                    <inputSchema>ye</inputSchema>
+                                </database>
+                                <strategy>
+                                    <matchers>
+                                        <tables>
+                                            <table>
+                                                <expression>^(.*)$</expression>
+                                                <tableClass>
+                                                    <transform>PASCAL</transform>
+                                                    <expression>$1</expression>
+                                                </tableClass>
+                                                <recordClass>
+                                                    <transform>PASCAL</transform>
+                                                    <expression>$1_P_O</expression>
+                                                </recordClass>
+                                            </table>
+                                        </tables>
+                                    </matchers>
+                                </strategy>
+                                <target>
+                                    <packageName>cn.yejy.jooq.domain</packageName>
+                                    <directory>${basedir}/gensrc/main/java</directory>
+                                </target>
+                                <generate>
+                                    <records>false</records>
+                                    <javaTimeTypes>true</javaTimeTypes>
+                                </generate>
+                            </generator>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

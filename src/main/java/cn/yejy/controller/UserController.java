@@ -1,13 +1,14 @@
 package cn.yejy.controller;
 
 import cn.yejy.data.ResponseData;
-import cn.yejy.entity.User;
 import cn.yejy.service.UserService;
+import org.jooq.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -15,30 +16,31 @@ public class UserController {
     UserService userService;
 
     @GetMapping(value = "/user/{user_id}")
-    public ResponseEntity findOne(@PathVariable("user_id") Long id) {
-        User user = userService.findById(id);
+    public ResponseEntity findOne(@PathVariable("user_id") Integer id) {
+        Record user = userService.findById(id);
         if (user == null) {
             return ResponseData.error(300,"empty");
         }
-        return ResponseData.ok("success", user);
+        return ResponseData.ok("success", user.intoMap());
     }
 
     @GetMapping(value = "/user/all")
     public ResponseEntity findAll() {
-        List<User> data = userService.find();
+        List<Map<String, Object>> data = userService.find();
         return ResponseData.ok("ok", data);
     }
-    @GetMapping(value = "/user/update/{user_id}")
-    public ResponseEntity update(@PathVariable("user_id") Long id) {
-        int rows = userService.update(id);
+    @PostMapping(value = "/user/update/{user_id}")
+    public ResponseEntity update(@PathVariable("user_id") Integer id, @RequestParam("username") String username,
+                                 @RequestParam("password") String password) {
+        int rows = userService.update(id, username, password);
         if (rows == 1) {
             return ResponseData.ok("修改成功");
         } else {
             return ResponseData.error(400, "修改失败");
         }
     }
-    @GetMapping(value = "/user/delete/{user_id}")
-    public ResponseEntity delete(@PathVariable("user_id") Long id) {
+    @PostMapping(value = "/user/delete/{user_id}")
+    public ResponseEntity delete(@PathVariable("user_id") Integer id) {
         boolean result = userService.delete(id) == 1;
         if (result) {
             return ResponseData.ok("删除成功");
@@ -48,27 +50,16 @@ public class UserController {
     }
 
     @PostMapping(value = "/user/save")
-    public ResponseEntity save(@RequestBody User user) {
+    public ResponseEntity save(@RequestParam("username") String username, @RequestParam("mobile") String mobile,
+                               @RequestParam("password") String password) {
         ResponseEntity result;
-        if (user == null) {
-            result = ResponseData.error(401, "缺少必要参数！");
+        Record userRecord = userService.save(username, mobile, password, true, false, false);
+        if (userRecord == null) {
+            result = ResponseData.error(400, "保存失败");
         } else {
-            User newUser = userService.save(user);
-            if (newUser == null) {
-                result = ResponseData.error(400, "保存失败");
-            } else {
-                result = ResponseData.ok("ok", newUser);
-            }
+            result = ResponseData.ok("ok", userRecord.intoMap());
         }
         return result;
-    }
-
-    @PostMapping(value = "/user/save2")
-    public ResponseEntity save2(@RequestBody User user) {
-        System.out.println(user);
-//        System.out.println(username);
-//        System.out.println(password);
-        return ResponseData.ok("ok");
     }
 
 }

@@ -1,9 +1,9 @@
 package cn.yejy;
 
 
-import cn.yejy.entity.User;
 import cn.yejy.repository.UserRepository;
 import cn.yejy.service.UserService;
+import org.jooq.Record;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ public class AppTest {
 
     @Test
     public void test() {
-        User user = userRepository.findById(6L);
+        Record userDAO = userRepository.findById(6);
 
-        System.out.println("user: " + user);
+        System.out.println("userDAO: " + userDAO);
     }
 }
