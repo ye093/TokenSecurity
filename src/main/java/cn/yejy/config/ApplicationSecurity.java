@@ -1,5 +1,6 @@
 package cn.yejy.config;
 
+import cn.yejy.constant.RoleConstant;
 import cn.yejy.filter.AuthenticationTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +17,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/authorize/**").permitAll()
-                .antMatchers("/user/**").hasAnyAuthority("USER", "SYS_ADMIN")
+                .antMatchers("/user/**").hasAnyAuthority(RoleConstant.USER, RoleConstant.SYS_ADMIN)
                 .and()
                 .csrf()
                 .disable()
