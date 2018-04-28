@@ -14,10 +14,18 @@ spring:
 
 logging:
   level:
-    root: warn
+    root: WARN
+    org.springframework.security: INFO
 http:
   encoding:
     enabled: true
     charset: UTF-8
     force-response: true
     force: true
+
+token:
+  key: '@ay*L(M_~M245!'
+  issuer: http://yejinyun.cn
+  subject: ye_093@163.com
+  expiration: 3600000
+  header: user_token

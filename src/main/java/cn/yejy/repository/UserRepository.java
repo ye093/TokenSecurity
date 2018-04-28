@@ -4,18 +4,14 @@ import static cn.yejy.jooq.domain.tables.User.*;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +47,8 @@ public class UserRepository {
 
     @CacheEvict(key = "#userId") // 更新缓存,CachePut会将返回结果集缓存到数据中
     public Integer update(Integer userId, String username, String password) {
-        int rows = dsl.update(USER).set(USER.USERNAME, username).set(USER.PASSWORD, password).set(USER.UPDATED_TIME, LocalDateTime.now()).where(USER.USER_ID.eq(userId)).execute();
+        LocalDateTime updatedTime = LocalDateTime.now();
+        int rows = dsl.update(USER).set(USER.USERNAME, username).set(USER.PASSWORD, password).set(USER.UPDATED_TIME, updatedTime).where(USER.USER_ID.eq(userId)).execute();
         return rows;
     }
 
@@ -59,6 +56,14 @@ public class UserRepository {
     public Integer delete(Integer userId) {
         int rows = dsl.delete(USER).where(USER.USER_ID.eq(userId)).execute();
         return rows;
+    }
+
+    /**
+     * 根据用户名查找用户
+     */
+    public Record findByUsername(String username) {
+        Record user = dsl.select().from(USER).where(USER.USERNAME.eq(username)).fetchOne();
+        return user;
     }
 
 }

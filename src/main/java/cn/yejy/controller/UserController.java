@@ -2,11 +2,13 @@ package cn.yejy.controller;
 
 import cn.yejy.data.ResponseData;
 import cn.yejy.service.UserService;
+import cn.yejy.util.UserHolderUtil;
 import org.jooq.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +17,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping(value = "/user/{user_id}")
-    public ResponseEntity findOne(@PathVariable("user_id") Integer id) {
+    @GetMapping(value = "/user")
+    public ResponseEntity findOne(HttpServletRequest request) {
+        Integer id = UserHolderUtil.getUserId(request);
         Record user = userService.findById(id);
         if (user == null) {
             return ResponseData.error(300,"empty");

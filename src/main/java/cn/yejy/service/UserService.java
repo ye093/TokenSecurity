@@ -1,8 +1,10 @@
 package cn.yejy.service;
 
 import cn.yejy.jooq.domain.tables.User;
+import cn.yejy.repository.RoleRepository;
 import cn.yejy.repository.UserRepository;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,9 @@ import java.util.Map;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     // 事务例子
     @Transactional(rollbackFor = Exception.class)
@@ -53,5 +58,21 @@ public class UserService {
         return userRepository.delete(userId);
     }
 
+    /**
+     * 根据用户名查找用户
+     */
+    public Map<String, Object> findUserAndRolesByUsername(String username) {
+        Map<String, Object> userWithRoles = null;
+        Record user = userRepository.findByUsername(username);
+        if (user != null) {
+            Integer userId = user.getValue(User.USER.USER_ID);
+            List<String> roles = roleRepository.getRolesByUserId(userId);
+            userWithRoles = user.intoMap();
+            if (roles != null && roles.size() > 0) {
+                userWithRoles.put("roles", roles);
+            }
+        }
+        return userWithRoles;
+    }
 
 }
