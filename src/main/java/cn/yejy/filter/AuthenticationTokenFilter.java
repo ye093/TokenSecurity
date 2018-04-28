@@ -1,11 +1,14 @@
 package cn.yejy.filter;
 
+import cn.yejy.constant.RoleConstant;
 import cn.yejy.util.JwtTokenHelper;
 import cn.yejy.util.UserHolderUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.jooq.tools.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -50,9 +53,13 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
         if (data != null) {
             String username = (String) data.get("username");
             List<String> roles = (List<String>) data.get("roles");
-            List<SimpleGrantedAuthority> authorities = null;
+            List<GrantedAuthority> authorities = null;
             if (roles != null) {
                 authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+            }
+            if (authorities == null || authorities.size() == 0) {
+                // 没分配权限，表示是一般会员
+                authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(RoleConstant.USER);
             }
             SecurityContextHolder.getContext()
                     .setAuthentication(new UsernamePasswordAuthenticationToken(username, "N/A", authorities));
