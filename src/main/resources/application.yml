@@ -29,3 +29,10 @@ token:
   subject: ye_093@163.com
   expiration: 3600000
   header: user_token
+
+alisms:
+  access-key-id: Dtq14ymWI99DkDuP
+  access-key-secret: pSMBWSRnLXggU8pdT6N45EpOIGKFZn
+  sms-sign-name: 叶金耘
+  sms-template-code-reg: SMS_134095344
+  sms-template-code-login: SMS_134095343

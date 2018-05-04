@@ -54,7 +54,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
             String username = (String) data.get("username");
             List<String> roles = (List<String>) data.get("roles");
             List<GrantedAuthority> authorities = null;
-            if (roles != null) {
+            if (roles != null || roles.size() > 0) {
                 authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
             }
             if (authorities == null || authorities.size() == 0) {
