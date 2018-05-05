@@ -2,6 +2,8 @@ package cn.yejy.repository;
 
 import static cn.yejy.jooq.domain.tables.User.*;
 
+import cn.yejy.jooq.domain.tables.Role;
+import cn.yejy.jooq.domain.tables.User;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,10 @@ public class UserRepository {
      * 根据用户名查找用户
      */
     public Record findByUsername(String username) {
-        Record user = dsl.select().from(USER).where(USER.USERNAME.eq(username)).fetchOne();
+        User u = USER.as("u");
+        Role r = Role.ROLE.as("r");
+        Record user = dsl.select(u.USER_ID, u.USERNAME, u.IS_LOCKED, u.IS_EXPIRED, u.IS_ENABLED, u.MOBILE, u.PASSWORD, u.OPEN_ID, r.ROLE_, r.NAME.as("role_name"))
+                .from(u).innerJoin(r).on(u.ROLE_ID.eq(r.ROLE_ID)).where(u.USERNAME.eq(username)).fetchOne();
         return user;
     }
 
@@ -70,7 +75,10 @@ public class UserRepository {
      * 根据手机号检查该用户是否存在
      */
     public Record findUserByMobile(String mobile) {
-        Record user = dsl.select().from(USER).where(USER.MOBILE.eq(mobile)).fetchOne();
+        User u = USER.as("u");
+        Role r = Role.ROLE.as("r");
+        Record user = dsl.select(u.USER_ID, u.USERNAME, u.IS_LOCKED, u.IS_EXPIRED, u.IS_ENABLED, u.MOBILE, u.PASSWORD, u.OPEN_ID, r.ROLE_, r.NAME.as("role_name"))
+                .from(u).innerJoin(r).on(u.ROLE_ID.eq(r.ROLE_ID)).where(u.MOBILE.eq(mobile)).fetchOne();
         return user;
     }
 

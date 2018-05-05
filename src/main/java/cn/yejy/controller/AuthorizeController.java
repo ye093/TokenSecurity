@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -33,13 +33,12 @@ public class AuthorizeController {
         }
         // 认证通过
         String token = tokenHelper.getToken(user);
-        return ResponseData.ok("success", token);
+        return ResponseData.ok("success", userToClient(user, token));
     }
 
     /* 短信登录*/
     @PostMapping(value = "/authorize/sms")
     public ResponseEntity authorizeSms(@RequestBody SmsDAO smsDAO) {
-        System.out.println(smsDAO);
         String errorMsg = null;
         String accessToken = smsDAO.getToken();
         Map<String, Object> reqData = null;
@@ -55,7 +54,7 @@ public class AuthorizeController {
             }
         }
         if (reqData != null) {
-            String reqCode = smsDAO.getCode();
+            String reqCode = smsDAO.getCaptcha();
             String mobile = smsDAO.getMobile();
             String parseCode = (String) reqData.get("code");
             String parseMobile = (String) reqData.get("mobile");
@@ -66,13 +65,22 @@ public class AuthorizeController {
                 if (user != null) {
                     // 认证通过
                     String token = tokenHelper.getToken(user);
-                    return ResponseData.ok("success", token);
+                    return ResponseData.ok("success", userToClient(user, token));
                 }
             } else {
                 errorMsg = "验证码错误";
             }
         }
         return ResponseData.error(ErrorCode.PARAM_ERROR, errorMsg);
+    }
+
+    private Map<String, Object> userToClient(Map<String, Object> user, String token) {
+        Map<String, Object> linkedMap = new LinkedHashMap<>();
+        linkedMap.put("username", user.get("username"));
+        linkedMap.put("role", user.get("role"));
+        linkedMap.put("roleName", user.get("role_name"));
+        linkedMap.put("token", token);
+        return linkedMap;
     }
 
 }

@@ -1,10 +1,8 @@
 package cn.yejy.service;
 
 import cn.yejy.jooq.domain.tables.User;
-import cn.yejy.repository.RoleRepository;
 import cn.yejy.repository.UserRepository;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +15,6 @@ import java.util.Map;
 public class UserService {
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
 
     // 事务例子
     @Transactional(rollbackFor = Exception.class)
@@ -63,9 +58,10 @@ public class UserService {
      */
     public Map<String, Object> findUserAndRolesByUsername(String username) {
         Record user = userRepository.findByUsername(username);
-        Map<String, Object> userWithRoles = user.intoMap();
-        setRoles(userWithRoles, user);
-        return userWithRoles;
+        if (user == null) {
+            return null;
+        }
+        return user.intoMap();
     }
 
     /**
@@ -82,19 +78,8 @@ public class UserService {
 
     public Map<String, Object> findByMobile(String mobile) {
         Record user = userRepository.findUserByMobile(mobile);
-        Map<String, Object> userWithRoles = user.intoMap();
-        setRoles(userWithRoles, user);
-        return userWithRoles;
-    }
-
-    private void setRoles(Map<String, Object> userWithRoles, Record user) {
-        if (user != null) {
-            Integer userId = user.getValue(User.USER.USER_ID);
-            List<String> roles = roleRepository.getRolesByUserId(userId);
-            if (roles != null && roles.size() > 0) {
-                userWithRoles.put("roles", roles);
-            }
-        }
+        if (user == null) return null;
+        return user.intoMap();
     }
 
 }

@@ -1,6 +1,5 @@
 package cn.yejy.filter;
 
-import cn.yejy.constant.RoleConstant;
 import cn.yejy.util.JwtTokenHelper;
 import cn.yejy.util.UserHolderUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -22,7 +20,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFilter {
@@ -52,15 +49,8 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
         }
         if (data != null) {
             String username = (String) data.get("username");
-            List<String> roles = (List<String>) data.get("roles");
-            List<GrantedAuthority> authorities = null;
-            if (roles != null || roles.size() > 0) {
-                authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-            }
-            if (authorities == null || authorities.size() == 0) {
-                // 没分配权限，表示是一般会员
-                authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(RoleConstant.USER);
-            }
+            String role = (String) data.get("role");
+            List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(role);
             SecurityContextHolder.getContext()
                     .setAuthentication(new UsernamePasswordAuthenticationToken(username, "N/A", authorities));
 

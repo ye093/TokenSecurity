@@ -1,9 +1,17 @@
 package cn.yejy.dao;
 
 public class SmsDAO {
-    private String code;
+    private String captcha;
     private String mobile;
     private String token;
+
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
+    }
 
     public String getMobile() {
         return mobile;
@@ -11,14 +19,6 @@ public class SmsDAO {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getToken() {
@@ -32,7 +32,7 @@ public class SmsDAO {
     @Override
     public String toString() {
         return "SmsDAO{" +
-                "code='" + code + '\'' +
+                "captcha='" + captcha + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", token='" + token + '\'' +
                 '}';
