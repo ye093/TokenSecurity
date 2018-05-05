@@ -62,17 +62,39 @@ public class UserService {
      * 根据用户名查找用户
      */
     public Map<String, Object> findUserAndRolesByUsername(String username) {
-        Map<String, Object> userWithRoles = null;
         Record user = userRepository.findByUsername(username);
+        Map<String, Object> userWithRoles = user.intoMap();
+        setRoles(userWithRoles, user);
+        return userWithRoles;
+    }
+
+    /**
+     * 根据手机号查找该用户是否存在
+     */
+    public boolean exists(String mobile) {
+        Record user = userRepository.findUserByMobile(mobile);
+        boolean exists = false;
+        if (user != null) {
+            exists = true;
+        }
+        return exists;
+    }
+
+    public Map<String, Object> findByMobile(String mobile) {
+        Record user = userRepository.findUserByMobile(mobile);
+        Map<String, Object> userWithRoles = user.intoMap();
+        setRoles(userWithRoles, user);
+        return userWithRoles;
+    }
+
+    private void setRoles(Map<String, Object> userWithRoles, Record user) {
         if (user != null) {
             Integer userId = user.getValue(User.USER.USER_ID);
             List<String> roles = roleRepository.getRolesByUserId(userId);
-            userWithRoles = user.intoMap();
             if (roles != null && roles.size() > 0) {
                 userWithRoles.put("roles", roles);
             }
         }
-        return userWithRoles;
     }
 
 }

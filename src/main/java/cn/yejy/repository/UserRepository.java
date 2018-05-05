@@ -66,4 +66,12 @@ public class UserRepository {
         return user;
     }
 
+    /**
+     * 根据手机号检查该用户是否存在
+     */
+    public Record findUserByMobile(String mobile) {
+        Record user = dsl.select().from(USER).where(USER.MOBILE.eq(mobile)).fetchOne();
+        return user;
+    }
+
 }

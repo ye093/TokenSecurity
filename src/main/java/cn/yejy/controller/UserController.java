@@ -1,5 +1,6 @@
 package cn.yejy.controller;
 
+import cn.yejy.constant.ErrorCode;
 import cn.yejy.data.ResponseData;
 import cn.yejy.service.UserService;
 import cn.yejy.util.UserHolderUtil;
@@ -22,7 +23,7 @@ public class UserController {
         Integer id = UserHolderUtil.getUserId(request);
         Record user = userService.findById(id);
         if (user == null) {
-            return ResponseData.error(300,"empty");
+            return ResponseData.error(ErrorCode.RECORD_EMPTY,"empty");
         }
         return ResponseData.ok("success", user.intoMap());
     }

@@ -21,25 +21,18 @@ public class JwtTokenHelper {
     @Value("${token.header}")
     private String headerKey;
 
-//    private static class SingletonHolder {
-//        static JwtTokenHelper instance = new JwtTokenHelper();
-//    }
-//
-//    private JwtTokenHelper() {
-//    }
-//
-//    public static JwtTokenHelper newInstance() {
-//        return SingletonHolder.instance;
-//    }
-
     public String getToken(Map<String, Object> data) {
+        return getToken(data, tokenExpiration);
+    }
+
+    public String getToken(Map<String, Object> data, long expiration) {
         JwtBuilder jwtBuilder = Jwts.builder();
         jwtBuilder.setIssuer(tokenIssuer)
                 .setSubject(tokenSubject)
                 .addClaims(data)
                 .signWith(SignatureAlgorithm.HS256, tokenKey);
-        Date date = new Date(System.currentTimeMillis() + tokenExpiration);
-        if (tokenExpiration != 0) {
+        if (expiration != 0) {
+            Date date = new Date(System.currentTimeMillis() + expiration);
             jwtBuilder.setExpiration(date);
         }
         return jwtBuilder.compact();
