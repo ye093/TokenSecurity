@@ -2,6 +2,7 @@ package cn.yejy.controller;
 
 import cn.yejy.constant.ErrorCode;
 import cn.yejy.dao.BasicAuthorDAO;
+import cn.yejy.dao.ResetPasswordDAO;
 import cn.yejy.dao.SmsDAO;
 import cn.yejy.data.ResponseData;
 import cn.yejy.service.UserService;
@@ -82,5 +83,47 @@ public class AuthorizeController {
         linkedMap.put("token", token);
         return linkedMap;
     }
+
+    /* 短信重置密码*/
+    @PostMapping(value = "/authorize/resetpwd")
+    public ResponseEntity authorizeReset(@RequestBody ResetPasswordDAO passwordDAO) {
+        String errorMsg = null;
+        String accessToken = passwordDAO.getToken();
+        Map<String, Object> reqData = null;
+        if (accessToken == null) {
+            errorMsg = "请先获取验证码";
+        } else {
+            try {
+                reqData = tokenHelper.parseToken(accessToken);
+            } catch (ExpiredJwtException e) {
+                errorMsg = "验证码已失效，请重新获取";
+            } catch (Exception e) {
+                errorMsg = "请先获取验证码";
+            }
+        }
+        if (reqData != null) {
+            String reqCode = passwordDAO.getCaptcha();
+            String mobile = passwordDAO.getMobile();
+            String parseCode = (String) reqData.get("code");
+            String parseMobile = (String) reqData.get("mobile");
+            // 验证通过
+            String password = passwordDAO.getPassword();
+            if (TextUtil.isAllNotEmpty(reqCode, parseCode, parseMobile, password)
+                    && reqCode.equals(parseCode) && mobile.equals(parseMobile)) {
+
+                boolean result = userService.updatePasswordByMobile(mobile, password);
+                if (result) {
+                    return ResponseData.ok("重置密码成功，请使用新密码登录");
+                } else {
+                    errorMsg = "重置密码失败，请联系管理员";
+                }
+            } else {
+                errorMsg = "验证码错误";
+            }
+        }
+        return ResponseData.error(ErrorCode.PARAM_ERROR, errorMsg);
+    }
+
+
 
 }

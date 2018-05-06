@@ -32,6 +32,9 @@ public class SendSmsService {
     @Value("${alisms.sms-template-code-login}")
     private String smsTemplateCodeLogin;
 
+    @Value("${alisms.sms-template-code-reset}")
+    private String smsTemplateCodeReset;
+
     private boolean send(final String phoneNumber, final String templateCode, final String code) {
         //设置超时时间-可自行调整
         System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
@@ -91,5 +94,15 @@ public class SendSmsService {
      */
     public boolean register(final String phoneNumber, final String code) {
         return send(phoneNumber, smsTemplateCodeReg, code);
+    }
+
+    /**
+     * 发送重置密码短信
+     * @param phoneNumber 手机号码
+     * @param code 验证码
+     * @return 成功或失败标识
+     */
+    public boolean resetPassword(final String phoneNumber, final String code) {
+        return send(phoneNumber, smsTemplateCodeReset, code);
     }
 }

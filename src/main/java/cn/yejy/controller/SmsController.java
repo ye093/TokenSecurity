@@ -8,7 +8,6 @@ import cn.yejy.util.JsonUtil;
 import cn.yejy.util.JwtTokenHelper;
 import cn.yejy.util.RandomCodeUtil;
 import cn.yejy.util.TextUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,26 +32,51 @@ public class SmsController {
     /* 登录短信*/
     @PostMapping(value = "/sms/login")
     public ResponseEntity smsLogin(@RequestBody String body) {
-        String phone = null;
+        String mobile = null;
         if (TextUtil.isNotEmpty(body)) {
-            phone = (String) JsonUtil.parse(body).get("phone");
+            mobile = (String) JsonUtil.parse(body).get("mobile");
         }
-        System.out.println(phone + "->4444");
+        return getSms(mobile, 1);
+    }
+
+    /* 重置密码短信*/
+    @PostMapping(value = "/sms/resetpwd")
+    public ResponseEntity resetPassword(@RequestBody String body) {
+        String mobile = null;
+        if (TextUtil.isNotEmpty(body)) {
+            mobile = (String) JsonUtil.parse(body).get("mobile");
+        }
+        return getSms(mobile, 3);
+    }
+
+    /* 获取短信{type:1登录，2注册，3重置}*/
+    private ResponseEntity getSms(String mobile, int type) {
         String errorMsg;
-        boolean exists = userService.exists(phone);
+
+        boolean exists = true;
+        if (type == 1 || type == 3) {
+            exists = userService.exists(mobile);
+        }
         if (exists) {
             String code = RandomCodeUtil.numberSequence(6);
-            boolean sendRes = sendSmsService.login(phone, code);
+            boolean sendRes = false;
+            if (type == 1) {
+                sendRes = sendSmsService.login(mobile, code);
+            } else if (type == 2) {
+                sendRes = sendSmsService.register(mobile, code);
+            } else if (type == 3) {
+                sendRes = sendSmsService.resetPassword(mobile, code);
+            }
             if (sendRes) {
                 // 生成短信认证token,时效5分钟
                 Map<String, Object> data = new HashMap<>();
                 data.put("code", code);
-                data.put("mobile", phone);
+                data.put("mobile", mobile);
                 String token = jwtTokenHelper.getToken(data,300000L);
 
                 Map<String, Object> resData = new HashMap<>();
                 resData.put("token", token);
-                return ResponseData.ok("success", resData);
+                return ResponseData.ok("短信已发送，请您把收到的验证码填写到对应的输入框中", resData);
             } else {
                 errorMsg = "短信发送失败，请稍后再试！";
             }
@@ -61,4 +85,5 @@ public class SmsController {
         }
         return ResponseData.error(ErrorCode.USER_NOT_EXISTS, errorMsg);
     }
+
 }

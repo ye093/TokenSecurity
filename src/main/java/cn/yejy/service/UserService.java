@@ -2,6 +2,7 @@ package cn.yejy.service;
 
 import cn.yejy.jooq.domain.tables.User;
 import cn.yejy.repository.UserRepository;
+import cn.yejy.util.TextUtil;
 import org.jooq.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,9 @@ public class UserService {
      * 根据手机号查找该用户是否存在
      */
     public boolean exists(String mobile) {
+        if (TextUtil.isEmpty(mobile)) {
+            return false;
+        }
         Record user = userRepository.findUserByMobile(mobile);
         boolean exists = false;
         if (user != null) {
@@ -80,6 +84,13 @@ public class UserService {
         Record user = userRepository.findUserByMobile(mobile);
         if (user == null) return null;
         return user.intoMap();
+    }
+
+    public boolean updatePasswordByMobile(String mobile, String password) {
+        if (TextUtil.isAllNotEmpty(mobile, password)) {
+            return userRepository.updatePasswordByMobile(mobile, password);
+        }
+        return false;
     }
 
 }

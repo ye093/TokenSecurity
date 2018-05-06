@@ -36,3 +36,4 @@ alisms:
   sms-sign-name: 叶金耘
   sms-template-code-reg: SMS_134095344
   sms-template-code-login: SMS_134095343
+  sms-template-code-reset: SMS_134075488

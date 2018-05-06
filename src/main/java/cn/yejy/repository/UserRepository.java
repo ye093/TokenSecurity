@@ -82,4 +82,12 @@ public class UserRepository {
         return user;
     }
 
+    /**
+     * 根据手机号修改密码
+     */
+    public boolean updatePasswordByMobile(String mobile, String password) {
+        int rows = dsl.update(USER).set(USER.PASSWORD, password).where(USER.MOBILE.eq(mobile)).execute();
+        return rows == 1;
+    }
+
 }

@@ -16,7 +16,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/authorize/**", "/sms/login").permitAll()
+                .antMatchers("/authorize/**", "/sms/login", "/sms/resetpwd").permitAll()
                 .antMatchers("/user/**").hasAnyAuthority(RoleConstant.USER, RoleConstant.SYS_ADMIN)
                 .and()
                 .csrf()
