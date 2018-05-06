@@ -29,7 +29,7 @@ public class AuthorizeController {
     public ResponseEntity authorizeBase(@RequestBody BasicAuthorDAO baseUserPwd) {
         Map<String, Object> user = userService.findUserAndRolesByUsername(baseUserPwd.getUsername());
         if (user == null || !user.get("password").equals(baseUserPwd.getPassword())) {
-            return ResponseData.error(ErrorCode.AUTHORIZE_FAILURE, "认证失败");
+            return ResponseData.error(ErrorCode.AUTHORIZE_FAILURE, "用户名或密码错误");
         }
         // 认证通过
         String token = tokenHelper.getToken(user);
