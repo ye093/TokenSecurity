@@ -18,7 +18,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping(value = "/user")
+    @GetMapping(value = "/user/fetchCurrent")
     public ResponseEntity findOne(HttpServletRequest request) {
         Integer id = UserHolderUtil.getUserId(request);
         Record user = userService.findById(id);

@@ -16,8 +16,10 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/authorize/**", "/sms/login", "/sms/resetpwd").permitAll()
+                .antMatchers("/authorize/**", "/sms/login",
+                        "/sms/resetpwd", "/test").permitAll()
                 .antMatchers("/user/**").hasAnyAuthority(RoleConstant.USER, RoleConstant.SYS_ADMIN)
+                .antMatchers("/wx/**").hasAnyAuthority(RoleConstant.USER) //微信小程序
                 .and()
                 .csrf()
                 .disable()

@@ -1,11 +1,13 @@
 package cn.yejy.controller;
 
 import cn.yejy.constant.ErrorCode;
+import cn.yejy.constant.RoleConstant;
 import cn.yejy.dao.BasicAuthorDAO;
 import cn.yejy.dao.ResetPasswordDAO;
 import cn.yejy.dao.SmsDAO;
 import cn.yejy.data.ResponseData;
 import cn.yejy.service.UserService;
+import cn.yejy.service.WxRequestService;
 import cn.yejy.util.JwtTokenHelper;
 import cn.yejy.util.TextUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -13,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,6 +28,8 @@ public class AuthorizeController {
     JwtTokenHelper tokenHelper;
     @Autowired
     UserService userService;
+    @Autowired
+    WxRequestService wxRequestService;
 
     /* 账号密码登录*/
     @PostMapping(value = "/authorize/base")
@@ -75,6 +81,35 @@ public class AuthorizeController {
         return ResponseData.error(ErrorCode.PARAM_ERROR, errorMsg);
     }
 
+    /* 小程序登录*/
+    @PostMapping(value = "/authorize/wx")
+    public ResponseEntity authorizeWx(@RequestParam("js_code") String jsCode) {
+        Map resObj =  wxRequestService.login(jsCode);
+        if (resObj == null) {
+            // 重试一次
+            resObj =  wxRequestService.login(jsCode);
+        }
+        if (resObj != null) {
+            // 提取
+            String openid = (String) resObj.get("openid");
+            String sessionKey = (String) resObj.get("session_key");
+            // 用户权限
+            String role = RoleConstant.USER;
+            if (TextUtil.isAllNotEmpty(openid, sessionKey)) {
+                Map<String, Object> tokenData = new HashMap<>();
+                tokenData.put("openid", openid);
+                tokenData.put("session_key", sessionKey);
+                tokenData.put("role", role);
+                String token = tokenHelper.getToken(tokenData);
+                Map<String, Object> data = new HashMap<>();
+                data.put("token", token);
+                return ResponseData.ok("success", data);
+            }
+        }
+        // 认证失败
+        return ResponseData.error(ErrorCode.AUTHORIZE_FAILURE, "登录失败");
+    }
+
     private Map<String, Object> userToClient(Map<String, Object> user, String token) {
         Map<String, Object> linkedMap = new LinkedHashMap<>();
         linkedMap.put("username", user.get("username"));
@@ -123,6 +158,7 @@ public class AuthorizeController {
         }
         return ResponseData.error(ErrorCode.PARAM_ERROR, errorMsg);
     }
+
 
 
 

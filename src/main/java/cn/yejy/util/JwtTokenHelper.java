@@ -50,7 +50,7 @@ public class JwtTokenHelper {
 
     public Map<String, Object> parseToken(HttpServletRequest request) throws ExpiredJwtException,Exception{
         String token = request.getHeader(headerKey);
-        if (token == null) {
+        if (token == null || TextUtil.isEmpty(token)) {
             return null;
         }
         Jws<Claims> claims = Jwts.parser()

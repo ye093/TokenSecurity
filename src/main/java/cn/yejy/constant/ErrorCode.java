@@ -9,4 +9,8 @@ public class ErrorCode {
     public static final Integer RECORD_EMPTY = 4003;
     // 请求参数出错
     public static final Integer PARAM_ERROR = 4004;
+    // 认证过期
+    public static final Integer TOKEN_EXPIRED = 4005;
+    // 非法请求
+    public static final Integer ERROR_REQUEST = 4006;
 }
