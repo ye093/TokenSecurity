@@ -37,7 +37,6 @@ public class WxRequestService {
         try {
             String text =
                     restTemplate.getForObject(WxRequestUtil.jscode2sessionUrl(appid, secret, js_code), String.class);
-            System.out.println(text);
             resEntity = JsonUtil.parse(text);
         } catch (Exception e) {
             logger.error(e.toString());

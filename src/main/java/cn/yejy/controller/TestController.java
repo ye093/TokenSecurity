@@ -12,7 +12,7 @@ import java.util.Map;
 @RestController
 public class TestController {
 
-    @GetMapping(value = "/test")
+    @GetMapping(value = "/test/aa/bb")
     public ResponseEntity hello(@RequestParam("appid") String appid, @RequestParam("secret") String secret) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("appid", appid);

@@ -24,11 +24,9 @@ public class UserService {
         if (result != 1) {
             throw new Exception("删除失败");
         }
-        System.out.println("删除成功");
         Record user = userRepository.findById(4);
         boolean isEnable = user.get(User.USER.IS_ENABLED);
         if (isEnable) {
-            System.out.println("还原成功");
             throw new Exception("无权修改失败");
         }
     }

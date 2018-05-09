@@ -31,6 +31,13 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+        String openid1 = (String) req.getAttribute("openid");
+        String userId = (String) req.getAttribute("userId");
+        if (TextUtil.isNotEmpty(openid1) || TextUtil.isNotEmpty(userId)) {
+            chain.doFilter(req, res);
+            return;
+        }
+
         Map<String, Object> data;
         try {
             data = jwtTokenHelper.parseToken((HttpServletRequest) req);
@@ -53,6 +60,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
             String openid = (String) data.get("openid");
             String session_key = (String) data.get("session_key");
             String role = (String) data.get("role");
+
             if (TextUtil.isAllNotEmpty(openid, session_key)) {
                 List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(role);
                 SecurityContextHolder.getContext()

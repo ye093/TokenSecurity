@@ -28,7 +28,6 @@ public class WxUserController {
         WxOpenKeyDAO wxOpenKeyDAO = new WxOpenKeyDAO(request);
         String text = WxRequestUtil.decryptData(wxOpenKeyDAO.getSessionKey(), wxEncryptedData.getEncryptedData(), wxEncryptedData.getIv());
         Map<String, Object> data = JsonUtil.parse(text);
-        System.out.println(data);
         // 判断登录的appid与解析出来的appid是否一致
         String parseOpenId = (String) data.get("openId");
         String nickName = (String) data.get("nickName");

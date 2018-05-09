@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.Filter;
+
 @EnableWebSecurity
 public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 
@@ -17,7 +19,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/authorize/**", "/sms/login",
-                        "/sms/resetpwd", "/test").permitAll()
+                        "/sms/resetpwd", "/test/**").permitAll()
                 .antMatchers("/user/**").hasAnyAuthority(RoleConstant.USER, RoleConstant.SYS_ADMIN)
                 .antMatchers("/wx/**").hasAnyAuthority(RoleConstant.USER) //微信小程序
                 .and()
@@ -28,9 +30,8 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
                 .and().addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
 
-
     @Bean
-    public AuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
+    Filter authenticationTokenFilterBean() throws Exception {
         AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter();
         authenticationTokenFilter.setAuthenticationManager(authenticationManagerBean());
         return authenticationTokenFilter;
