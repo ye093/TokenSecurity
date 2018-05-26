@@ -41,3 +41,7 @@ alisms:
 weixin:
   appid: wx4e6481a1c749dfa4
   secret: 372fa07ce76492813c410ffef85585c4
+
+ali-barcode:
+  url: https://ali-barcode.showapi.com/barcode
+  appcode: 024793dea588440e988297b0958d05b5
