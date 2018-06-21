@@ -1,5 +1,6 @@
 package cn.yejy.constant;
 
+
 public class ErrorCode {
     // 用户不存在
     public static final Integer USER_NOT_EXISTS = 4001;

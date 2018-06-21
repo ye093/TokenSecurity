@@ -35,7 +35,7 @@ public class GoodsService {
 
     public Map<String, Object> getGoodsByBarCode(String barCode) {
         Record record = goodsRepository.getGoodsByBarCode(barCode);
-        if (record == null) {
+        if (record == null && barCode.matches("^69\\d+$")) {
             Map aliMap = getGoodsFromAli(barCode);
             if (aliMap == null) {
                 // 请联系管理员
@@ -51,7 +51,10 @@ public class GoodsService {
                 String trademark = (String) resBody.get("trademark");
                 String manuAddress = (String) resBody.get("manuAddress");
                 String goodsName = (String) resBody.get("goodsName");
-                return goodsRepository.saveGoods(spec, img, code, manuName, trademark, manuAddress, goodsName, "yejy");
+                HashMap<String, Object> data = new HashMap<>();
+                Integer id = goodsRepository.saveGoods(spec, img, code, manuName, trademark, manuAddress, goodsName, "yejy");
+                data.put("goods_id", id);
+                return data;
             }
             return null;
         } else {
@@ -69,6 +72,7 @@ public class GoodsService {
             HttpEntity httpEntity = new HttpEntity(headers);
             ResponseEntity<String> respEntity =
                     restTemplate.exchange(url + "?code=" + code, HttpMethod.GET, httpEntity, String.class);
+            System.out.println(respEntity);
             resEntity = JsonUtil.parse(respEntity.getBody());
         } catch (Exception e) {
             System.out.println(e);

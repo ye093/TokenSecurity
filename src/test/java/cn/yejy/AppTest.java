@@ -2,13 +2,11 @@ package cn.yejy;
 
 
 import cn.yejy.service.GoodsService;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import java.util.Map;
 
 @RunWith(SpringRunner.class)
@@ -20,7 +18,7 @@ public class AppTest {
 
     @Test
     public void test() {
-        Map<String, Object> data = goodsService.getGoodsByBarCode("6922255451427");
+        Map<String, Object> data = goodsService.getGoodsByBarCode("6948960100078");
         System.out.println(data);
     }
 }
