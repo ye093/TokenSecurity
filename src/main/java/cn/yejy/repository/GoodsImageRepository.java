@@ -15,6 +15,7 @@ public class GoodsImageRepository {
     DSLContext dsl;
 
     public boolean save(Integer goods_id, Byte type, Byte order, String img_url, LocalDateTime creation_time, String created_by) {
+
         GoodsImage img = GoodsImage.GOODS_IMAGE;
         int rows = dsl.insertInto(img, img.GOODS_ID, img.TYPE, img.ORDER, img.IMG_URL, img.CREATION_TIME, img.CREATED_BY)
                 .values(goods_id, type, order, img_url, creation_time, created_by).execute();
